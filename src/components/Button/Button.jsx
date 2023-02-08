@@ -1,8 +1,6 @@
 import styles from './styles.module.css';
 import classnames from 'classnames';
 import { Size } from '../../constants/ui';
-import { useContext } from 'react';
-import { ThemeContext } from '../../contexts/ThemeContext';
 
 export const ButtonViewVariant = {
   prime: 'prime',
@@ -15,7 +13,7 @@ export const Button = ({
   disabled,
   className,
   size = Size.m,
-  viewVariant = ButtonViewVariant.second,
+  viewVariant = ButtonViewVariant.prime,
 }) => {
   return (
     <button
