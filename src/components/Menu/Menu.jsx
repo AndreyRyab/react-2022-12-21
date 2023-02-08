@@ -1,21 +1,22 @@
 import { Dish } from '../Dish/Dish';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  selectRestaurantMenuById,
-  selectRestaurantMenuByIdSortedByDishName,
-} from '../../store/modules/restaurant/selectors';
+import { selectRestaurantMenuByIdSortedByDishName } from '../../store/modules/restaurant/selectors';
 import { useEffect } from 'react';
 import { selectIsDishLoading } from '../../store/modules/dish/selectors';
 import { fetchDishByRestaurantId } from '../../store/modules/dish/thunks/fetchDishByRestaurantId';
 import { Button } from '../Button/Button';
-import { useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { getAlternativeSort } from './utils';
 import { sortDirections } from '../../constants/sortDirections';
+import { withAuthorization } from '../../hocs/withAuthorization/withAuthorization';
+
+import styles from './styles.module.css';
 
 const sortSearchParamName = 'sort';
 const defaultSort = { [sortSearchParamName]: sortDirections.asc };
 
-export const Menu = ({ restaurantId }) => {
+export const Menu = () => {
+  const { restaurantId } = useParams();
   const [searchParams, setSearchParams] = useSearchParams(defaultSort);
   const dispatch = useDispatch();
   const currentSort = searchParams.get(sortSearchParamName);
@@ -38,23 +39,27 @@ export const Menu = ({ restaurantId }) => {
 
   return (
     <div>
-      <h2>Menu</h2>
-      <Button
-        onClick={() =>
-          setSearchParams({
-            sort: getAlternativeSort(currentSort),
-          })
-        }
-      >
-        Toggle sort (current: {currentSort})
-      </Button>
-      <ul>
+      <div className={styles.header}>
+        <h2>Menu</h2>
+        <Button
+          className={styles.sortButton}
+          onClick={() => {
+            setSearchParams({
+              sort: getAlternativeSort(currentSort),
+            });
+          }}
+        >
+          {currentSort}
+        </Button>
+      </div>
+
+      <div>
         {dishIds.map((id) => (
-          <li>
-            <Dish dishId={id} />
-          </li>
+          <Dish key={id} dishId={id} className={styles.dish} />
         ))}
-      </ul>
+      </div>
     </div>
   );
 };
+
+export const MenuWithAuthorizedCheck = withAuthorization(Menu);

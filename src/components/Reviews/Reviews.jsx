@@ -4,8 +4,12 @@ import { selectRestaurantReviewsById } from '../../store/modules/restaurant/sele
 import { useEffect } from 'react';
 import { selectIsReviewLoading } from '../../store/modules/review/selectors';
 import { fetchReviewsByRestaurantId } from '../../store/modules/review/thunk/fetchReviewsByRestaurantId';
+import { useParams } from 'react-router-dom';
 
-export const Reviews = ({ restaurantId }) => {
+import styles from './styles.module.css';
+
+export const Reviews = () => {
+  const { restaurantId } = useParams();
   const dispatch = useDispatch();
   const reviewIds = useSelector((state) =>
     selectRestaurantReviewsById(state, { restaurantId })
@@ -23,13 +27,11 @@ export const Reviews = ({ restaurantId }) => {
   return (
     <div>
       <h2>Reviews</h2>
-      <ul>
+      <div>
         {reviewIds.map((id) => (
-          <li>
-            <Review reviewId={id} />
-          </li>
+          <Review key={id} reviewId={id} className={styles.review} />
         ))}
-      </ul>
+      </div>
     </div>
   );
 };

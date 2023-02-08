@@ -1,22 +1,31 @@
-import { Restaurant } from '../Restaurant/Restaurant';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectRestaurantIdsFilteredByDishId } from '../../store/modules/restaurant/selectors';
+import { fetchRestaurants } from '../../store/modules/restaurant/thunk/fetchRestaurants';
+import { RestaurantLink } from '../RestaurantLink/RestaurantLink';
 
-export const RestaurantList = ({ restaurants }) => {
-  return (
-    <section>
-      <h1>Restaurant List</h1>
-      
-      <ul>
-        {
-          restaurants?.length > 0
-          ? 
-          restaurants.map(restaurant => 
-            <li key={restaurant['id']}>
-              <Restaurant {...restaurant}/>
-            </li>
-          )
-          : 'No restaurants found'
-        }
-      </ul>
-    </section>
+import styles from './styles.module.css';
+
+export const RestaurantList = ({ dishId }) => {
+  const dispatch = useDispatch();
+  const restaurantIds = useSelector((state) =>
+    selectRestaurantIdsFilteredByDishId(state, { dishId })
   );
-}
+
+  useEffect(() => {
+    dispatch(fetchRestaurants());
+  }, []);
+
+  return (
+    <div>
+      <h3>Доступно в:</h3>
+      {restaurantIds.map((restaurantId) => (
+        <RestaurantLink
+          key={restaurantId}
+          restaurantId={restaurantId}
+          className={styles.restaurant}
+        />
+      ))}
+    </div>
+  );
+};
